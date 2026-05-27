@@ -1,0 +1,75 @@
+<div class="order-summary-wrapper" style="max-width: 650px;">
+        
+    <!-- Search Card -->
+    <div class="step-card">
+        <div class="step-header">
+            <span class="step-badge">🔎</span>
+            <h3>Lacak Pesanan Anda</h3>
+        </div>
+        <p style="color: var(--text-muted); margin-bottom: 20px;">Masukkan No. Transaksi (Order ID) Anda untuk melihat status pembayaran dan pengiriman diamond/voucher game.</p>
+        
+        <form ng-submit="searchOrder()">
+            <div class="search-box" style="margin: 0; max-width: 100%;">
+                <input type="text" ng-model="searchId" placeholder="Contoh: RS-20260527-ABCDEF" required>
+                <button type="submit">Cari</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Search Result Card -->
+    <div class="step-card" style="margin-top: 25px; border: 1px solid var(--border-color);" ng-if="order">
+        <div class="step-header">
+            <span class="step-badge" style="background: var(--primary)">✓</span>
+            <h3>Detail Transaksi</h3>
+        </div>
+
+        <table class="summary-table">
+            <tr>
+                <td>Order ID</td>
+                <td style="font-family: monospace; font-weight: bold; color: #ffffff;" ng-bind="order.order_id">RS-XXXX</td>
+            </tr>
+            <tr>
+                <td>Produk</td>
+                <td ng-bind="order.product_name">Diamond</td>
+            </tr>
+            <tr>
+                <td>Tujuan / ID Player</td>
+                <td style="color: var(--primary); font-weight: 700;" ng-bind="order.customer_no">12345678</td>
+            </tr>
+            <tr>
+                <td>Total Bayar</td>
+                <td ng-bind="formatRupiah(order.selling_price)">Rp 0</td>
+            </tr>
+            <tr>
+                <td>Metode Pembayaran</td>
+                <td ng-bind="order.payment_method">Bank Transfer</td>
+            </tr>
+            <tr>
+                <td>Status Transaksi</td>
+                <td>
+                    <span ng-if="order.status === 'pending'" class="badge badge-warning">Menunggu Pembayaran</span>
+                    <span ng-if="order.status === 'process'" class="badge badge-info">Sedang Diproses</span>
+                    <span ng-if="order.status === 'success'" class="badge badge-success">Sukses</span>
+                    <span ng-if="order.status === 'failed'" class="badge badge-danger">Gagal</span>
+                </td>
+            </tr>
+            
+            <!-- Serial number code if success -->
+            <tr ng-if="order.status === 'success' && order.digiflazz_sn">
+                <td style="font-weight: bold; color: var(--success);">SN / KODE VOUCHER</td>
+                <td style="font-family: monospace; font-size: 1.1rem; font-weight: bold; color: #ffffff;" ng-bind="order.digiflazz_sn">SN-XXXX</td>
+            </tr>
+        </table>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="/order/{{order.order_id}}" class="btn btn-outline btn-sm">📋 Buka Halaman Kuitansi</a>
+        </div>
+    </div>
+
+    <!-- Not found card -->
+    <div class="step-card" style="margin-top: 25px; text-align: center; border-left: 4px solid var(--danger);" ng-if="searched && !order">
+        <p style="font-size: 1.1rem; font-weight: 600;">No. Transaksi Tidak Ditemukan</p>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Mohon periksa kembali Order ID yang Anda masukkan.</p>
+    </div>
+
+</div>

@@ -1,0 +1,323 @@
+<style>
+    .admin-layout {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 30px;
+        min-height: 70vh;
+    }
+    .admin-sidebar {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: 20px;
+        height: fit-content;
+    }
+    .admin-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .admin-link {
+        padding: 10px 15px;
+        border-radius: var(--radius-md);
+        font-weight: 600;
+        color: var(--text-muted);
+        text-align: left;
+        width: 100%;
+        transition: var(--transition-fast);
+    }
+    .admin-link:hover, .admin-link.active {
+        background: rgba(139, 92, 246, 0.1);
+        color: var(--primary);
+    }
+    .admin-main {
+        flex: 1;
+    }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    .stat-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .stat-val {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #ffffff;
+    }
+    .stat-label {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+    }
+</style>
+
+<div class="admin-layout">
+    
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <h4 style="margin-bottom: 20px; text-align: center; color: var(--primary);">Admin Panel</h4>
+        <div class="admin-nav">
+            <button ng-click="setAdminTab('dashboard')" class="btn admin-link" ng-class="{active: adminTab === 'dashboard'}">📊 Dashboard</button>
+            <button ng-click="setAdminTab('products')" class="btn admin-link" ng-class="{active: adminTab === 'products'}">🎮 Kelola Produk</button>
+            <button ng-click="setAdminTab('orders')" class="btn admin-link" ng-class="{active: adminTab === 'orders'}">📋 Kelola Order</button>
+            <button ng-click="setAdminTab('settings')" class="btn admin-link" ng-class="{active: adminTab === 'settings'}">⚙️ Pengaturan</button>
+        </div>
+    </aside>
+
+    <!-- Main Section -->
+    <div class="admin-main">
+        
+        <!-- Tab 1: Dashboard -->
+        <div ng-if="adminTab === 'dashboard'">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <div>
+                    <h2>📊 Dashboard Ringkasan</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Pantau transaksi, sinkronkan produk, dan kelola konfigurasi Digiflazz.</p>
+                </div>
+                <button ng-click="syncProducts()" class="btn btn-primary btn-sm">🔄 Sync Digiflazz Produk</button>
+            </div>
+
+            <!-- Stats cards grid -->
+            <div class="stats-grid">
+                <div class="stat-card" style="border-left: 4px solid var(--primary); background: rgba(139, 92, 246, 0.05);">
+                    <span class="stat-label">💰 Saldo Digiflazz</span>
+                    <span class="stat-val" style="color: var(--primary);" ng-bind="formatRupiah(stats.digiBalance)">Rp 0</span>
+                    <span style="font-size: 0.7rem; color: var(--text-muted);">Mode: {{stats.mode | uppercase}}</span>
+                </div>
+                <div class="stat-card" style="border-left: 4px solid var(--secondary);">
+                    <span class="stat-label">📈 Revenue (Success)</span>
+                    <span class="stat-val" style="color: var(--secondary);" ng-bind="formatRupiah(stats.revenue)">Rp 0</span>
+                </div>
+                <div class="stat-card" style="border-left: 4px solid var(--warning);">
+                    <span class="stat-label">⏳ Order Pending</span>
+                    <span class="stat-val" style="color: var(--warning);" ng-bind="stats.pending">0</span>
+                </div>
+            </div>
+
+            <!-- Recent Orders table preview -->
+            <div class="step-card">
+                <div class="step-header">
+                    <h3>📋 Transaksi Terbaru</h3>
+                </div>
+                <div class="table-responsive mt-3">
+                    <table class="summary-table" style="font-size: 0.85rem;">
+                        <thead>
+                            <tr style="font-weight: bold; border-bottom: 2px solid var(--border-color);">
+                                <td>Order ID</td>
+                                <td>Produk</td>
+                                <td>Tujuan / ID</td>
+                                <td>Total Bayar</td>
+                                <td>Status</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="o in orders | limitTo:5" style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 10px 0; font-family: monospace; font-weight: bold;">{{o.order_id}}</td>
+                                <td ng-bind="o.product_name">Product</td>
+                                <td ng-bind="o.customer_no">12345678</td>
+                                <td ng-bind="formatRupiah(o.selling_price)">Rp 0</td>
+                                <td>
+                                    <span ng-if="o.status === 'pending'" class="badge badge-warning">Pending</span>
+                                    <span ng-if="o.status === 'process'" class="badge badge-info">Proses</span>
+                                    <span ng-if="o.status === 'success'" class="badge badge-success">Sukses</span>
+                                    <span ng-if="o.status === 'failed'" class="badge badge-danger">Gagal</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Product Management -->
+        <div ng-if="adminTab === 'products'">
+            <div style="margin-bottom: 25px;">
+                <h2>🎮 Manajemen Produk</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Sesuaikan markup harga untuk memperoleh margin keuntungan dari harga beli Digiflazz.</p>
+            </div>
+
+            <div class="step-card">
+                <div class="table-responsive">
+                    <table class="summary-table" style="font-size: 0.85rem;">
+                        <thead>
+                            <tr style="font-weight: bold; border-bottom: 2px solid var(--border-color);">
+                                <td>SKU Code</td>
+                                <td>Nama Produk</td>
+                                <td>Brand / Game</td>
+                                <td>Harga Beli</td>
+                                <td>Markup Keuntungan</td>
+                                <td>Harga Jual</td>
+                                <td>Aktif</td>
+                                <td style="text-align: right;">Aksi</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="p in products" style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 10px 0; font-family: monospace; font-weight: bold;">{{p.buyer_sku_code}}</td>
+                                <td ng-bind="p.product_name">Product Name</td>
+                                <td ng-bind="p.brand">Brand</td>
+                                <td style="color: var(--warning);" ng-bind="formatRupiah(p.price)">Rp 0</td>
+                                <td>
+                                    <input type="number" ng-model="p.markup" class="input-control" style="width: 80px; padding: 4px 8px; font-size: 0.85rem;" required>
+                                </td>
+                                <td style="color: var(--secondary); font-weight: bold;" ng-bind="formatRupiah(Number(p.price) + Number(p.markup))">Rp 0</td>
+                                <td>
+                                    <input type="checkbox" ng-model="p.is_active" ng-true-value="1" ng-false-value="0" style="transform: scale(1.1); cursor: pointer;">
+                                </td>
+                                <td style="text-align: right;">
+                                    <button ng-click="updateProductMarkup(p)" class="btn btn-primary-sm btn-sm">Simpan</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Transactions Management -->
+        <div ng-if="adminTab === 'orders'">
+            <div style="margin-bottom: 25px;">
+                <h2>📋 Manajemen Transaksi / Order</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Kelola detail order, proses pembayaran manual, dan pantau pengiriman produk game.</p>
+            </div>
+
+            <div class="step-card">
+                <div class="table-responsive">
+                    <table class="summary-table" style="font-size: 0.85rem;">
+                        <thead>
+                            <tr style="font-weight: bold; border-bottom: 2px solid var(--border-color);">
+                                <td>Order ID</td>
+                                <td>Produk</td>
+                                <td>Tujuan / ID</td>
+                                <td>Metode</td>
+                                <td>Harga Jual</td>
+                                <td>SN / Voucher Code</td>
+                                <td>Status</td>
+                                <td style="text-align: right;">Aksi</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="o in orders" style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 10px 0; font-family: monospace; font-weight: bold;">{{o.order_id}}</td>
+                                <td ng-bind="o.product_name">Product Name</td>
+                                <td style="color: var(--primary); font-weight: 700;" ng-bind="o.customer_no">12345678</td>
+                                <td ng-bind="o.payment_method">Method</td>
+                                <td ng-bind="formatRupiah(o.selling_price)">Rp 0</td>
+                                <td>
+                                    <input type="text" ng-model="o.digiflazz_sn" class="input-control" placeholder="SN / Voucher code" style="width: 120px; padding: 4px 8px; font-size: 0.8rem; font-family: monospace;">
+                                </td>
+                                <td>
+                                    <select ng-model="o.status" class="input-control" style="padding: 4px 8px; font-size: 0.8rem; width: 100px;" required>
+                                        <option value="pending">Pending</option>
+                                        <option value="process">Proses</option>
+                                        <option value="success">Sukses</option>
+                                        <option value="failed">Gagal</option>
+                                        <option value="refund">Refund</option>
+                                    </select>
+                                </td>
+                                <td style="text-align: right;">
+                                    <button ng-click="updateOrderStatus(o)" class="btn btn-primary-sm btn-sm">Update</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 4: System Settings -->
+        <div ng-if="adminTab === 'settings'">
+            <div style="margin-bottom: 25px;">
+                <h2>⚙️ Pengaturan Sistem</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Kelola kredensial API Digiflazz, pengaturan toko, markup, dan data kontak.</p>
+            </div>
+
+            <form ng-submit="saveSettings()">
+                <!-- Digiflazz Credentials -->
+                <div class="step-card">
+                    <div class="step-header">
+                        <h3>🔑 Digiflazz API Credentials</h3>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label>Username Digiflazz</label>
+                            <input type="text" ng-model="settings.digiflazz_username" class="input-control w-100" placeholder="Username Digiflazz">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Digiflazz Mode</label>
+                            <select ng-model="settings.digiflazz_mode" class="input-control w-100">
+                                <option value="sandbox">Development (Sandbox)</option>
+                                <option value="production">Production</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="form-group col-md-6">
+                            <label>API Key (Sandbox / Development)</label>
+                            <input type="password" ng-model="settings.digiflazz_api_key" class="input-control w-100" placeholder="dev-key-xxxx">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>API Key (Production)</label>
+                            <input type="password" ng-model="settings.digiflazz_production_key" class="input-control w-100" placeholder="prod-key-xxxx">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Site settings -->
+                <div class="step-card mt-4">
+                    <div class="step-header">
+                        <h3>🌐 Pengaturan Toko & Markup</h3>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label>Nama Brand Website</label>
+                            <input type="text" ng-model="settings.site_name" class="input-control w-100" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Tagline Website</label>
+                            <input type="text" ng-model="settings.site_tagline" class="input-control w-100">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="form-group col-md-6">
+                            <label>Markup Harga Bawaan (Rupiah)</label>
+                            <input type="number" ng-model="settings.markup_default" class="input-control w-100" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Auto-Proses Transaksi</label>
+                            <select ng-model="settings.auto_process" class="input-control w-100">
+                                <option value="1">Ya (Otomatis ketika bayar)</option>
+                                <option value="0">Tidak (Proses manual)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="form-group col-md-6">
+                            <label>No. WhatsApp CS</label>
+                            <input type="text" ng-model="settings.site_whatsapp" class="input-control w-100" placeholder="Contoh: 081234567890">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Email Layanan</label>
+                            <input type="email" ng-model="settings.site_email" class="input-control w-100">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 25px; text-align: right;">
+                    <button type="submit" class="btn btn-primary" style="padding: 12px 35px;">💾 Simpan Konfigurasi</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,27 @@
+<div class="section-title">
+    <h2>🎮 Katalog <span>Semua Game</span></h2>
+</div>
+
+<div class="search-container" style="max-width: 100%; margin-bottom: 40px;">
+    <div class="search-box" style="margin: 0; max-width: 100%;">
+        <input type="text" ng-model="searchQuery" placeholder="Cari voucher game, e-money, streaming...">
+        <button type="button">Cari</button>
+    </div>
+</div>
+
+<div class="game-grid">
+    <div class="game-card" ng-repeat="game in games | filter:filterGames" href="/game/{{game.slug}}" onclick="window.location.href='/game/' + this.getAttribute('href').split('/').pop()">
+        <span class="popular-badge" ng-if="game.is_popular">Populer</span>
+        <div class="game-img-wrapper">
+            <img ng-src="{{game.image || 'https://images.unsplash.com/photo-1612287230202-1bf1d85d1bdf?auto=format&fit=crop&q=80&w=300'}}" alt="{{game.name}}">
+        </div>
+        <div class="game-info">
+            <h3 ng-bind="game.name">Game Name</h3>
+            <p ng-bind="game.brand">Brand</p>
+        </div>
+    </div>
+    
+    <div class="col-12 text-center py-5" ng-if="(games | filter:filterGames).length === 0">
+        <p style="color: var(--text-muted);">Tidak ada game yang cocok dengan pencarian Anda.</p>
+    </div>
+</div>

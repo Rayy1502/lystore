@@ -1,0 +1,46 @@
+<!-- Hero Header Sliders -->
+<div class="hero-slider">
+    <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=1200');">
+        <div class="hero-content">
+            <h2>Ray Store</h2>
+            <p>Platform penyedia layanan top-up game dan voucher digital termurah, tercepat, dan otomatis 24 jam terpercaya di Indonesia.</p>
+            <a href="/catalog" class="btn btn-primary">🎮 Cari Game Sekarang</a>
+        </div>
+    </div>
+</div>
+
+<!-- Search Input Box -->
+<div class="search-container">
+    <div class="search-box">
+        <input type="text" ng-model="searchQuery" placeholder="Cari voucher game, e-money, streaming..." ng-change="goToCatalog()">
+        <a href="/catalog" class="btn btn-primary" style="margin: 0; padding: 10px 24px; border-radius: var(--radius-xl);">Cari</a>
+    </div>
+</div>
+
+<!-- Category buttons filter -->
+<div style="display: flex; gap: 10px; margin-bottom: 40px; overflow-x: auto; padding-bottom: 10px; justify-content: center;">
+    <button ng-click="setCategory('all')" class="btn btn-sm" ng-class="selectedCategory === 'all' ? 'btn-primary' : 'btn-outline'" style="border-radius: var(--radius-xl); white-space: nowrap;">
+        🌐 Semua Kategori
+    </button>
+    <button ng-repeat="cat in categories" ng-click="setCategory(cat.slug)" class="btn btn-sm" ng-class="selectedCategory === cat.slug ? 'btn-primary' : 'btn-outline'" style="border-radius: var(--radius-xl); white-space: nowrap;">
+        <span ng-bind="cat.icon"></span> <span ng-bind="cat.name"></span>
+    </button>
+</div>
+
+<!-- Section Game List -->
+<div class="section-title">
+    <h2>🎮 Game <span>Populer</span></h2>
+</div>
+
+<div class="game-grid">
+    <div class="game-card" ng-repeat="game in games" ng-click="closeDropdown()" href="/game/{{game.slug}}" onclick="window.location.href='/game/' + this.getAttribute('href').split('/').pop()">
+        <span class="popular-badge" ng-if="game.is_popular">Populer</span>
+        <div class="game-img-wrapper">
+            <img ng-src="{{game.image || 'https://images.unsplash.com/photo-1612287230202-1bf1d85d1bdf?auto=format&fit=crop&q=80&w=300'}}" alt="{{game.name}}">
+        </div>
+        <div class="game-info">
+            <h3 ng-bind="game.name">Game Name</h3>
+            <p ng-bind="game.brand">Brand</p>
+        </div>
+    </div>
+</div>

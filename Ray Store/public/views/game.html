@@ -1,0 +1,122 @@
+<div class="game-detail-wrapper">
+    
+    <!-- Left Column: Game Profile & Instructions -->
+    <div class="game-left-col">
+        <div class="game-profile-card">
+            <img ng-src="{{game.image || 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&q=80&w=300'}}" class="game-profile-img" alt="{{game.name}}">
+            <h2 ng-bind="game.name">Game Name</h2>
+            <p ng-bind="game.description">Game Description</p>
+            
+            <div class="game-instruction-box">
+                <h4>💡 Cara Top-Up</h4>
+                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;" ng-bind="game.instruction">
+                    Masukkan info akun Anda sesuai petunjuk yang diberikan.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Wizard Steps Form -->
+    <div class="game-right-col">
+        <form ng-submit="submitOrder()">
+
+            <!-- STEP 1: Akun Tujuan (Form Fields parsed from JSON array schema) -->
+            <div class="step-card">
+                <span class="step-number">1</span>
+                <div class="step-header">
+                    <span class="step-badge">1</span>
+                    <h3>Masukkan Data Akun</h3>
+                </div>
+                
+                <div class="form-row">
+                    <!-- Standard User ID Form Field -->
+                    <div class="form-group col-md-6 col-12">
+                        <label>User ID / Akun Player</label>
+                        <input type="text" ng-model="formData.fields.user_id" class="input-control" placeholder="Contoh: 12345678" required>
+                    </div>
+
+                    <!-- Optional Zone / Server ID Form Field (MLBB, Genshin, Honkai) -->
+                    <div class="form-group col-md-6 col-12" ng-if="game.slug === 'mobile-legends' || game.slug === 'genshin-impact' || game.slug === 'honkai-star-rail'">
+                        <label>Server ID / Zone</label>
+                        <input type="text" ng-model="formData.fields.server_id" class="input-control" placeholder="Contoh: 1234" ng-required="game.slug === 'mobile-legends'">
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: Pilih Nominal Denominations -->
+            <div class="step-card">
+                <span class="step-number">2</span>
+                <div class="step-header">
+                    <span class="step-badge">2</span>
+                    <h3>Pilih Nominal Top-Up</h3>
+                </div>
+
+                <div class="nominal-grid">
+                    <div class="nominal-card" 
+                         ng-repeat="p in products" 
+                         ng-class="{selected: selectedProduct.buyer_sku_code === p.buyer_sku_code}"
+                         ng-click="selectProduct(p)">
+                        <span class="nominal-check">✓</span>
+                        <div class="nominal-title" ng-bind="p.product_name">Nominal</div>
+                        <div class="nominal-price" ng-bind="'Rp ' + p.selling_price.toLocaleString('id-ID')">Rp 0</div>
+                    </div>
+                </div>
+                
+                <div class="text-center py-4" ng-if="products.length === 0">
+                    <p style="color: var(--text-muted);">Tidak ada nominal tersedia untuk game ini. Pastikan sync produk panel admin sudah berjalan!</p>
+                </div>
+            </div>
+
+            <!-- STEP 3: Pilih Metode Pembayaran -->
+            <div class="step-card">
+                <span class="step-number">3</span>
+                <div class="step-header">
+                    <span class="step-badge">3</span>
+                    <h3>Pilih Metode Pembayaran</h3>
+                </div>
+
+                <div class="payment-grid">
+                    <div class="payment-card" 
+                         ng-repeat="pay in payments" 
+                         ng-class="{selected: selectedPayment.code === pay.code}"
+                         ng-click="selectPayment(pay)">
+                        <div>
+                            <span style="font-weight: bold; color: #ffffff;" ng-bind="pay.name">Payment Name</span>
+                            <span ng-if="pay.fee > 0" class="badge badge-info ms-2" ng-bind="'+ Rp ' + pay.fee"></span>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted); display: block;">Total Bayar:</span>
+                            <span style="font-weight: bold; color: var(--secondary);" ng-bind="'Rp ' + calculateTotal(pay.fee).toLocaleString('id-ID')">Rp 0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 4: WhatsApp CS & Checkout Submit -->
+            <div class="step-card">
+                <span class="step-number">4</span>
+                <div class="step-header">
+                    <span class="step-badge">4</span>
+                    <h3>Informasi Kontak & Pembelian</h3>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label for="whatsappNo">Nomor WhatsApp Aktif</label>
+                    <input type="tel" ng-model="formData.whatsapp" class="input-control" placeholder="Contoh: 081234567890" required>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 5px;">Kuitansi transaksi dan status pengiriman akan diinfokan ke nomor WhatsApp ini.</p>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label for="emailAddr">Alamat Email (Opsional)</label>
+                    <input type="email" ng-model="formData.email" class="input-control" placeholder="nama@email.com">
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100" style="padding: 15px 0; font-size: 1.1rem; border-radius: var(--radius-md);">
+                    ⚡ Beli Sekarang
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+</div>

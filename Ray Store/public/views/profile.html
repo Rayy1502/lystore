@@ -1,0 +1,68 @@
+<div class="game-detail-wrapper" style="grid-template-columns: 1fr 3fr;">
+    
+    <!-- Left Sidebar Navigation -->
+    <div class="game-left-col">
+        <div class="game-profile-card" style="padding: 20px;">
+            <div class="user-avatar-sm" style="width: 80px; height: 80px; font-size: 2.5rem; margin: 0 auto 15px auto;" ng-bind="userLetter()">
+                U
+            </div>
+            <h3 style="text-align: center; margin-bottom: 5px;" ng-bind="currentUser.name">User</h3>
+            <p style="text-align: center; font-size: 0.85rem; margin-bottom: 25px;" ng-bind="currentUser.email">email@email.com</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button ng-click="setTab('profile')" class="btn btn-sm" ng-class="tab === 'profile' ? 'btn-primary' : 'btn-outline'" style="justify-content: flex-start; width: 100%;">
+                    👤 Profil Saya
+                </button>
+                <button ng-click="setTab('orders')" class="btn btn-sm" ng-class="tab === 'orders' ? 'btn-primary' : 'btn-outline'" style="justify-content: flex-start; width: 100%;">
+                    📋 Riwayat Order
+                </button>
+                <a href="/admin" ng-if="currentUser.role === 'admin'" class="btn btn-secondary btn-sm" style="justify-content: flex-start; margin-top: 15px;">
+                    🛠️ Admin Panel
+                </a>
+                <button ng-click="logout()" class="btn btn-outline btn-sm text-danger" style="justify-content: flex-start; border-color: rgba(239, 68, 68, 0.2); width: 100%;">
+                    🚪 Keluar / Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Panel Content -->
+    <div class="game-right-col">
+        <!-- Profile Tab -->
+        <div class="step-card" ng-if="tab === 'profile'">
+            <div class="step-header">
+                <h3>👤 Informasi Profil</h3>
+            </div>
+            
+            <div class="row" style="margin-top: 20px;">
+                <div class="form-group col-md-6">
+                    <label>Nama Lengkap</label>
+                    <input type="text" class="input-control w-100" ng-value="currentUser.name" readonly>
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Alamat Email</label>
+                    <input type="text" class="input-control w-100" ng-value="currentUser.email" readonly>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top: 15px;">
+                <div class="form-group col-md-6">
+                    <label>Hak Akses Akun</label>
+                    <input type="text" class="input-control w-100" ng-value="currentUser.role | uppercase" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Tab -->
+        <div class="step-card" ng-if="tab === 'orders'">
+            <div class="step-header">
+                <h3>📋 Riwayat Pembelian Anda</h3>
+            </div>
+
+            <p style="color: var(--text-muted); text-align: center; padding: 40px;">
+                Untuk melihat status atau kuitansi pesanan aktif, silakan gunakan fitur <a href="/check-order" style="color: var(--primary); font-weight: 600;">Lacak Pesanan ➔</a>.
+            </p>
+        </div>
+    </div>
+
+</div>

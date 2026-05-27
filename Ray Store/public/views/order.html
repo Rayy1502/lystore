@@ -1,0 +1,88 @@
+<div class="order-summary-wrapper">
+        
+    <div class="step-card" style="border: 1px solid var(--primary); box-shadow: 0 0 20px var(--primary-glow);">
+        <div class="step-header">
+            <span class="step-badge" style="background: var(--success)" ng-if="order.status === 'success'">✓</span>
+            <span class="step-badge" style="background: var(--warning)" ng-if="order.status === 'pending' || order.status === 'process'">⏳</span>
+            <h3 ng-if="order.status === 'pending'">Menunggu Pembayaran</h3>
+            <h3 ng-if="order.status === 'process'">Sedang Diproses</h3>
+            <h3 ng-if="order.status === 'success'">Pesanan Sukses Dikirim!</h3>
+            <h3 ng-if="order.status === 'failed'">Transaksi Gagal</h3>
+        </div>
+        
+        <p style="color: var(--text-muted); margin-bottom: 20px;" ng-if="order.status === 'pending'">
+            Silakan selesaikan pembayaran Anda sebelum waktu pembayaran kedaluwarsa (24 jam) agar pesanan Anda dapat diproses secara otomatis oleh sistem kami.
+        </p>
+        <p style="color: var(--text-muted); margin-bottom: 20px;" ng-if="order.status === 'process'">
+            Pembayaran Anda telah diterima! Sistem kami sedang mengirimkan diamond/voucher secara otomatis ke ID Game Anda. Mohon tunggu sejenak.
+        </p>
+
+        <table class="summary-table">
+            <tr>
+                <td>No. Transaksi (Order ID)</td>
+                <td style="font-family: monospace; font-weight: bold; color: #ffffff;" ng-bind="order.order_id">RS-XXXX</td>
+            </tr>
+            <tr>
+                <td>Game / Brand</td>
+                <td ng-bind="order.product_name">Diamond</td>
+            </tr>
+            <tr>
+                <td>ID Game / Akun Tujuan</td>
+                <td style="color: var(--primary); font-weight: 700;" ng-bind="order.customer_no">12345678</td>
+            </tr>
+            <tr>
+                <td>Metode Pembayaran</td>
+                <td ng-bind="order.payment_method">Transfer Bank</td>
+            </tr>
+            <tr>
+                <td>No. WhatsApp Konfirmasi</td>
+                <td ng-bind="order.whatsapp">08xxxxxxxxxx</td>
+            </tr>
+            <tr>
+                <td>Status Transaksi</td>
+                <td>
+                    <span ng-if="order.status === 'pending'" class="badge badge-warning">Menunggu Pembayaran</span>
+                    <span ng-if="order.status === 'process'" class="badge badge-info">Sedang Diproses</span>
+                    <span ng-if="order.status === 'success'" class="badge badge-success">Sukses</span>
+                    <span ng-if="order.status === 'failed'" class="badge badge-danger">Gagal</span>
+                </td>
+            </tr>
+            <tr class="summary-total">
+                <td>Total Transfer</td>
+                <td ng-bind="formatRupiah(order.selling_price)">Rp 0</td>
+            </tr>
+        </table>
+
+        <!-- Payment Transfer directions -->
+        <div class="payment-instructions-box" ng-if="order.status === 'pending'">
+            <h4 style="margin-bottom: 10px; color: #ffffff;">💳 Petunjuk Transfer Pembayaran</h4>
+            <p style="font-size: 0.9rem; color: var(--text-muted);">Silakan transfer tepat sesuai jumlah di atas ke nomor rekening berikut:</p>
+            
+            <div class="payment-number-copy">
+                <span class="payment-number-val" id="paymentNo" ng-bind="order.payment_number">12345678</span>
+            </div>
+            
+            <div class="payment-number-copy" style="margin-top: 10px;">
+                <span class="payment-number-val" id="paymentAmt" ng-bind="order.selling_price">0</span>
+            </div>
+
+            <p style="font-size: 0.8rem; color: var(--warning); margin-top: 15px;">⚠️ PENTING: Mohon melakukan transfer hingga digit terakhir agar sistem otomatis kami dapat memverifikasi pembayaran Anda lebih cepat.</p>
+        </div>
+
+        <!-- Serial number / voucher code if success -->
+        <div class="payment-instructions-box" style="background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.3);" ng-if="order.status === 'success' && order.digiflazz_sn">
+            <h4 style="margin-bottom: 5px; color: var(--success);">📦 Serial Number / Kode Voucher:</h4>
+            <div style="font-family: monospace; font-size: 1.2rem; font-weight: bold; color: #ffffff; padding: 10px; background: #030306; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.2); display: inline-block;" ng-bind="order.digiflazz_sn">
+                SN-XXXX-XXXX
+            </div>
+        </div>
+
+        <!-- Real-time WebSockets tracking update actions -->
+        <div style="margin-top: 30px; display: flex; gap: 15px;">
+            <button ng-if="order.status === 'pending'" ng-click="confirmPayment()" class="btn btn-primary" style="flex: 1;">⚡ Saya Sudah Bayar</button>
+            <button ng-click="refreshStatus()" class="btn btn-outline" style="flex: 1;">🔄 Perbarui Status</button>
+        </div>
+
+    </div>
+
+</div>
