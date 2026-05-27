@@ -67,8 +67,8 @@
 
             <div class="navbar-actions">
                 <div ng-if="!isLoggedIn()" class="d-flex gap-2">
-                    <a href="/login" class="btn btn-outline btn-sm">🔑 Masuk</a>
-                    <a href="/register" class="btn btn-primary btn-sm">👤 Daftar</a>
+                    <a href="views/login" class="btn btn-outline btn-sm">🔑 Masuk</a>
+                    <a href="views/register" class="btn btn-primary btn-sm">👤 Daftar</a>
                 </div>
                 <div ng-if="isLoggedIn()" class="user-dropdown">
                     <button class="user-btn" ng-click="toggleDropdown()">
@@ -76,9 +76,9 @@
                         <span class="d-none d-sm-inline" ng-bind="currentUser.name">User</span>
                     </button>
                     <div class="dropdown-menu" ng-class="{show: dropdownOpen}">
-                        <a href="/profile" ng-click="closeDropdown()">👤 Profil Saya</a>
-                        <a href="/profile?tab=orders" ng-click="closeDropdown()">📋 Riwayat Order</a>
-                        <a href="/admin" ng-if="currentUser.role === 'admin'" ng-click="closeDropdown()" style="color: var(--warning);">🛠️ Admin Panel</a>
+                        <a href="views/profile" ng-click="closeDropdown()">👤 Profil Saya</a>
+                        <a href="views/profile?tab=orders" ng-click="closeDropdown()">📋 Riwayat Order</a>
+                        <a href="views/admin" ng-if="currentUser.role === 'admin'" ng-click="closeDropdown()" style="color: var(--warning);">🛠️ Admin Panel</a>
                         <div class="dropdown-divider"></div>
                         <a href="#" ng-click="logout(); closeDropdown()" class="text-danger">🚪 Keluar</a>
                     </div>
@@ -124,14 +124,14 @@
                     <h5 style="margin-bottom: 20px; font-size: 1.1rem; color: #ffffff;">Peta Situs</h5>
                     <ul class="list-unstyled" style="display: flex; flex-direction: column; gap: 10px; font-size: 0.9rem; color: var(--text-muted);">
                         <li><a href="/" class="hover-white">🏠 Beranda</a></li>
-                        <li><a href="/catalog" class="hover-white">🎮 Katalog Game</a></li>
-                        <li><a href="/check-order" class="hover-white">🔎 Lacak Pesanan</a></li>
+                        <li><a href="views/catalog" class="hover-white">🎮 Katalog Game</a></li>
+                        <li><a href="views/check-order" class="hover-white">🔎 Lacak Pesanan</a></li>
                     </ul>
                 </div>
                 <div class="col-md-3">
                     <h5 style="margin-bottom: 20px; font-size: 1.1rem; color: #ffffff;">Hubungi Kami</h5>
                     <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px;">Jika ada pertanyaan atau kendala transaksi, hubungi Customer Support kami:</p>
-                    <a href="https://wa.me/6281234567890" target="_blank" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-sm); font-size: 0.85rem;">
+                    <a href="https://wa.me/6283177179381" target="_blank" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-sm); font-size: 0.85rem;">
                         💬 WhatsApp CS
                     </a>
                 </div>
