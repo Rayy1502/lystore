@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id" ng-app="RayStoreApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/">
+    <title ng-bind="pageTitle + ' — Ray Store'">Ray Store — Top-Up Game Terpercaya</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS for layout foundation -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Ray Store Custom Neon Dark Stylesheet -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    
+    <style>
+        /* Modern overrides & additions */
+        .marquee-wrapper {
+            background: #0d0d1e;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 0;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .marquee-content {
+            display: inline-block;
+            animation: marquee 25s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        .marquee-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-right: 40px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .marquee-item .highlight {
+            color: var(--secondary);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body ng-controller="MainController" class="page-wrapper">
+
+    <!-- Header / Navbar -->
+    <header class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand">
+                <div class="brand-logo">
+                    <span class="brand-icon">⚡</span>
+                    <span class="brand-text">Ray Store</span>
+                </div>
+            </a>
+            
+            <nav class="navbar-menu d-none d-md-flex">
+                <a href="/" class="nav-link" ng-class="{active: isActive('/')}">🏠 Beranda</a>
+                <a href="/catalog" class="nav-link" ng-class="{active: isActive('/catalog')}">🎮 Katalog Game</a>
+                <a href="/check-order" class="nav-link" ng-class="{active: isActive('/check-order')}">🔎 Lacak Pesanan</a>
+            </nav>
+
+            <div class="navbar-actions">
+                <div ng-if="!isLoggedIn()" class="d-flex gap-2">
+                    <a href="/login" class="btn btn-outline btn-sm">🔑 Masuk</a>
+                    <a href="/register" class="btn btn-primary btn-sm">👤 Daftar</a>
+                </div>
+                <div ng-if="isLoggedIn()" class="user-dropdown">
+                    <button class="user-btn" ng-click="toggleDropdown()">
+                        <div class="user-avatar-sm" ng-bind="userLetter()">A</div>
+                        <span class="d-none d-sm-inline" ng-bind="currentUser.name">User</span>
+                    </button>
+                    <div class="dropdown-menu" ng-class="{show: dropdownOpen}">
+                        <a href="/profile" ng-click="closeDropdown()">👤 Profil Saya</a>
+                        <a href="/profile?tab=orders" ng-click="closeDropdown()">📋 Riwayat Order</a>
+                        <a href="/admin" ng-if="currentUser.role === 'admin'" ng-click="closeDropdown()" style="color: var(--warning);">🛠️ Admin Panel</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" ng-click="logout(); closeDropdown()" class="text-danger">🚪 Keluar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Recent Transactions Real-time Marquee Ticker -->
+    <div class="marquee-wrapper">
+        <div class="marquee-content">
+            <div class="marquee-item" ng-repeat="tx in recentTransactions">
+                <span class="badge" ng-class="tx.status === 'success' ? 'badge-success' : 'badge-warning'" ng-bind="tx.status === 'success' ? 'SUKSES' : 'PENDING'"></span>
+                Pemesanan <span class="highlight" ng-bind="tx.product_name">Diamond</span> 
+                ID <span class="highlight" ng-bind="tx.order_id">RS-XXXX</span>
+                <span class="text-muted" ng-bind="tx.time">Baru saja</span>
+            </div>
+            <div class="marquee-item" ng-if="recentTransactions.length === 0">
+                ⚡ Selamat datang di Ray Store! Top-up diamond tercepat & terpercaya ⚡
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Views (SPA Outlet Container) -->
+    <main class="main-content container py-4">
+        <div ng-view></div>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background: #06060c; border-top: 1px solid var(--border-color); padding: 40px 0; margin-top: auto;">
+        <div class="container">
+            <div class="row gap-y-4">
+                <div class="col-md-5">
+                    <div class="brand-logo mb-3">
+                        <span class="brand-icon">⚡</span>
+                        <h4 class="brand-text d-inline">Ray Store</h4>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6;">
+                        Ray Store adalah platform penyedia layanan top-up game dan voucher digital termurah, tercepat, dan terpercaya di Indonesia. Otomatisasi 24 jam nonstop terintegrasi API Digiflazz.
+                    </p>
+                </div>
+                <div class="col-md-3 offset-md-1">
+                    <h5 style="margin-bottom: 20px; font-size: 1.1rem; color: #ffffff;">Peta Situs</h5>
+                    <ul class="list-unstyled" style="display: flex; flex-direction: column; gap: 10px; font-size: 0.9rem; color: var(--text-muted);">
+                        <li><a href="/" class="hover-white">🏠 Beranda</a></li>
+                        <li><a href="/catalog" class="hover-white">🎮 Katalog Game</a></li>
+                        <li><a href="/check-order" class="hover-white">🔎 Lacak Pesanan</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5 style="margin-bottom: 20px; font-size: 1.1rem; color: #ffffff;">Hubungi Kami</h5>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px;">Jika ada pertanyaan atau kendala transaksi, hubungi Customer Support kami:</p>
+                    <a href="https://wa.me/6281234567890" target="_blank" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-sm); font-size: 0.85rem;">
+                        💬 WhatsApp CS
+                    </a>
+                </div>
+            </div>
+            <div class="row mt-4 pt-3" style="border-top: 1px solid var(--border-color); font-size: 0.8rem; color: var(--text-muted);">
+                <div class="col-md-6">
+                    &copy; 2026 Ray Store. All Rights Reserved. Built with Node.js & AngularJS.
+                </div>
+                <div class="col-md-6 text-md-end">
+                    Optimasi CDN & DDoS Protection by Cloudflare
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notifications Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <!-- Socket.io client -->
+    <script src="/socket.io/socket.io.js"></script>
+    
+    <!-- AngularJS libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
+    
+    <!-- Application Logic -->
+    <script src="/app.js"></script>
+</body>
+</html>
